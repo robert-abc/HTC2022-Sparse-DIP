@@ -2,8 +2,6 @@
 
 
 By the rules: *Your repository must contain a README.md file with at least the following sections:*
-* ...
-* *Brief description of your algorithm ....*
 * *Installation instructions, including any requirements.*
 * *Python users: Please specify any modules used. If you use Anaconda, please add to the repository an environment.yml file capable of creating an environment than can run your code (instructions). Otherwise, please add a requirements.txt file generated with pip freeze (instructions)*
 * *Usage instructions.*
@@ -14,8 +12,8 @@ By the rules: *Your repository must contain a README.md file with at least the f
 
 # Helsinki Tomography Challenge 2022 (HTC 2022): Brief description of our algorithm
 
-* See Section 8 for basic usage of the algorithm: It may take a few minutes to reconstruct the tomographic image. 
-* See Section 5 for an overview of the proposed method.
+* See Section 7 for basic usage of the algorithm: It may take a few minutes to reconstruct the tomographic image. 
+* See Section 4 for an overview of the proposed method.
 * The other sections describe the challenge rules and detail the (forward) problem model.
 
 ## Authors
@@ -128,7 +126,15 @@ The first step consists in estimating the tomographic image using only the DIP. 
 
 ### 4.1 Second step: Reconstructing with DIP and CSIIRR together
 
-The second step consists in 
+The second step consists in:
+
+* Outer loop (repeat three times)
+   - Such as in CSIIRR, estimating the unknown projections. In the first iteration, the input is the output from the first step. 
+   - **First Inner loop**: Such as in CSIIRR, reconstructing via MMP. Note that it is an iterative algorithm with inner iterations defined by a stopping criterion that depends on a user-defined tolerance. 
+   - Denoising the result with non-local means.
+   - Using the morphological operation closing (erosion of the dilation) in the result.
+   - **Second inner loop**: Reconstructing the tomographic image using the DIP with the solid disk + noise as the input and the sinogram obtained with CSIIRR in the forward model. Note that it is an iterative algorithm with inner iterations defined by a fixed number of iterations. 
+   - Repeat
 
 ## 5. Reconstruction postprocessing: Segmentation 
 
