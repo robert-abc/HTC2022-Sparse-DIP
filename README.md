@@ -1,14 +1,10 @@
-# HTC2022 - First proposal
-
+# HTC2022 - Proposed algorithm
 
 By the rules: *Your repository must contain a README.md file with at least the following sections:*
 * *Installation instructions, including any requirements.*
 * *Python users: Please specify any modules used. If you use Anaconda, please add to the repository an environment.yml file capable of creating an environment than can run your code (instructions). Otherwise, please add a requirements.txt file generated with pip freeze (instructions)*
 * *Usage instructions.*
 * *Show few examples.*
-
-
-
 
 # Helsinki Tomography Challenge 2022 (HTC 2022): Brief description of our algorithm
 
@@ -124,7 +120,7 @@ In this work, we propose to use the DIP and CSIIRR together in the same algorith
 The first step consists in estimating the tomographic image using only the DIP. Originally, DIP considers a random tensor as the only input. In our work, the input is the tomographic image of the solid disk from the HTC training dataset with an additive noise. We considered 950 iterations in this step. 
 
 
-### 4.1 Second step: Reconstructing with DIP and CSIIRR together
+### 4.2 Second step: Reconstructing with DIP and CSIIRR together
 
 The second step consists in:
 
@@ -141,8 +137,6 @@ The second step consists in:
 By the instructions: *The competitors do not need to follow the above segmentation procedure, and are encouraged to explore various segmentation techniques for the limited-angle reconstructions.* The segmentation method proposed by the challenge organizers is available at: https://www.fips.fi/HTCdata.php.
 
 Instead of using this method, we...
-
-
 
 ## 6. Reconstruction assessment method: Confusion matrix 
 
