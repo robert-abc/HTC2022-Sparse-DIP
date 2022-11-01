@@ -94,25 +94,8 @@ $$\hat{x} = f_{\hat{\theta}}(z)$$
 
 The code is available at https://github.com/DmitryUlyanov/deep-image-prior.
 
-### 3.2 DIP-WTV for CT image denoising: overview [[6]](#6)
 
-* Input: Sinogram
-* Output: Tomographic image
-
-In [[6]](#6), the authors modified the original DIP to solve image denoising problems, when $A$ is the identity operator, including on CT images. That is, the goal was not to reconstruct the tomographic images $x$ given the sinogram $y$, but rather obtain $x$ given a noisy image $x_{\delta}$.  
-
-To this end, the authors proposed to include a weighted (isotropic) total variation regularization term:
-
-$$ \hat{\theta} = \arg\underset{\theta}{\min} ( ||A f_{\theta}(z)- y||^2_2 + \sum_{i=1}^N \mu_i || (\nabla x)_i||_2) $$
-
-where $\nabla$ denotes the gradient of $x$ in both directions of the image (vertical and horizontal). 
-
-The authors used the ADMM (Alternating direction of multipliers) to solve this functional. When $\mu$ is constant, the method reduces to the conventional (isotropic) TV regularization. 
-
-The code is available at https://github.com/sedaboni/ADMM-DIPTV.
-
-
-### 3.3 DIP for limited-angle CT reconstruction: overview [[7]](#7)
+### 3.2 DIP for limited-angle CT reconstruction: overview [[7]](#7)
 
 * Input: Sinogram
 * Output: Tomographic image
@@ -125,18 +108,27 @@ But, instead of using only convolutional layers in $f_{\theta}$ as the original 
 
 They also use the ADMM to solve this functional. No code was publicly found.
 
+### 3.3 Compressed sensing improved iterative reconstruction-reprojection (CSIIRR) for limited-angle electron tomography image reconstruction: overview [[8]](#8)
+
+In [[8]](#8), the authors developed an algorithm called CSIIRR to reconstruct electron tomographic images, that inherently presents limited-angle data. After preprocessing the data, it followed repeatedly:
+1. Reprojecting the reconstruction of the last iteration to estimate the unknown projections;
+1. Reconstructing the tomographic image using modified matching pursuit (MMP), an greedy algorithm that includes a $\ell_0$-norm constraint in the solution. The MMP algorithm can be found in Algorithm 1 of the same work. 
+
 ## 4. Proposed method:
 
-* Input: Sinogram
-* Output: Tomographic image
+* Input: Limited-angle sinogram, solid disk tomographic image
+* Output: Reconstructed tomographic image
 
-In [[8]](#8), the authors
+In this work, we propose to use the DIP and CSIIRR together in the same algorithm. 
+
+### 4.1 First step: Reconstructing only with DIP
+
+The first step consists in estimating the tomographic image using only the DIP. Originally, DIP considers a random tensor as the only input. In our work, the input is the tomographic image of the solid disk from the HTC training dataset with an additive noise. We considered 950 iterations in this step. 
 
 
-### Notes about training:
-* In relation to network training, it is not allowed to train a separate network for each level of difficulty: *It is ok to train the network for each category separately but the architecture of the network should stay the same.* (https://www.fips.fi/HTCfaq.php)
-* For each difficulty group, we made available the network weights after training. 
+### 4.1 Second step: Reconstructing with DIP and CSIIRR together
 
+The second step consists in 
 
 ## 5. Reconstruction postprocessing: Segmentation 
 
@@ -144,8 +136,6 @@ By the instructions: *The competitors do not need to follow the above segmentati
 
 Instead of using this method, we...
 
-### Notes:
-* Although 
 
 
 ## 6. Reconstruction assessment method: Confusion matrix 
@@ -249,5 +239,5 @@ Semih Barutcu, Selin Aslan, Aggelos K. Katsaggelos and Doğa Gürsoy.
 “Limited‑angle computed tomography with deep image and physics priors”. Scientific Reports, vol. 11, 17740 (2021). Available at: https://doi.org/10.1038/s41598-021-97226-2
 
 <a id="8">[8]</a> 
-Valentina Candiani, Antti Hannukainen, and Nuutti Hyvönen.
-“Computational Framework for Applying Electrical Impedance Tomography to Head Imaging”. SIAM Journal on Scientific Computing, vol. 41, no. 5, pp.B1034-B1060 (2019). Available at: https://doi.org/10.1137/19M1245098.
+Lun Li, Renmin Han, Zhaotian Zhang, Tiande Guo, Zhiyong Liu and Fa Zhang. 
+“Compressed sensing improved iterative reconstruction-reprojection algorithm for electron tomography”. From 15th International Symposium on Bioinformatics Research and Applications (ISBRA’19). Available at: https://doi.org/10.1186/s12859-020-3529-3.
