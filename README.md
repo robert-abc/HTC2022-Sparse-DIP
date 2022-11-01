@@ -153,18 +153,16 @@ Instead of using this method, we...
 * We ran our codes using Google Colaboratory (Colab), but it results in a big list of packages (obtained by pip freeze > requirements.txt) and not all of them are necessary.
 * It is possible to create a anaconda environment "by hand" given the packages list. In the following table, there is a small list of the main packages we used (with "import").
 
-| Package  | Version | Package  | Version |
-| ------------- | ------------- | ------------- | ------------- |
-| Python  | 3.7.12  |  re* | 2.2.1  | 
-| argparse  | 1.1  |  scipy | 1.4.1  | 
-| cv2  | 4.1.2  | skimage | 0.16.2  | 
-| joblib | 1.0.1 | sklearn | 0.22.2  | 
-| Keras | 2.6.0 | tensorflow | 2.6.0  |
-| matplotlib | 3.2.2  | tqdm | 4.62.2  | 
-| numpy | 1.19.5  | torch | 1.9.0  | 
-| Pillow | 7.1.2  | torchvision | 0.10.0  | 
-*or regex
-torch radon
+| Package | Version |
+| ------------- | ------------- |
+| Python | 3.7.12 | 
+| Numpy | 1.21.6 | 
+| Matplotlib | 3.5.3 | 
+| Scipy | 1.7.3 | 
+| Skimage | 0.18.3 |
+| Pillow | 9.3.0 | 
+| Torch | 1.6.0+cu101 | 
+| TorchRadon | 1.0.0 | 
 
 <!--- conda create NomeDoEnvironment -c pytorch -c  nvidia -c conda-forge opencv keras matplotlib pillow scipy scikit-image scikit-learn tensorflow tqdm pytorch torchvision cudatoolkit=11.1 --->
 
