@@ -121,7 +121,7 @@ $$ \hat{\theta} = \arg\underset{\theta}{\min} ( ||A f_{\theta}(z) - y||_1 + \lam
 
 $$\hat{x_{\theta}} = f_{\hat{\theta}}(z)$$
 
-Originally, DIP considers a random tensor as the only input. In our work, the input is the tomographic image of the solid disk from the HTC training dataset with an additive noise. We considered 950 iterations in this step. 
+Originally, DIP considers a random tensor as the only input. In our work, the input is the tomographic image of the solid disk from the HTC training dataset with a additive noise. We considered 950 iterations in this step. 
 
 
 ### 4.2 Second step: Reconstructing with DIP and CSIIRR together
@@ -139,19 +139,19 @@ $$\hat{x_{\theta}} = f_{\hat{\theta}}(z)$$
 * **Outer loop** (repeat three times)
    1. Such as in CSIIRR, estimating the unknown projections (subsection 3.3.1). In the first iteration, the input is the output from the first step. 
    1. **First Inner loop**: Such as in CSIIRR, reconstructing via MMP (subsection 3.3.2). We will call this result $x^{MMP}$. Note that it is an iterative algorithm with inner iterations defined by a stopping criterion that depends on a user-defined tolerance. 
-   1. Denoising the result of *ii* with non-local means. We will call this result as $x_{den}^{MMP}$. 
-   1. Using the morphological operation closing (erosion of the dilation) in the result of *iii*. We will call this result simply as $x^*$ and will include it in a regularization term in the following DIP reconstruction of *iv*.
+   1. Denoising the result of *ii* with non-local means. We will call this result $x_{den}^{MMP}$. 
+   1. Using the morphological operation closing (erosion of the dilation) in the result of *iii*. We will call this result simply $x^*$ and will include it in a regularization term in the following DIP reconstruction of *iv*.
    1. **Second inner loop**: Reconstructing the tomographic image using the DIP using the solid disk + noise as the DIP input and $x^*$ in a regularization term. Note that it is an iterative algorithm with inner iterations defined by a fixed number of iterations.
    1. Repeat
 
 ## 5. Reconstruction postprocessing: Segmentation 
 
-By the instructions: *The competitors do not need to follow the above segmentation procedure, and are encouraged to explore various segmentation techniques for the limited-angle reconstructions.* The segmentation method proposed by the challenge organizers is available at  https://www.fips.fi/HTCdata.php and is mostly based on the Otsu's segmentation method.
+By the instructions: *The competitors do not need to follow the above segmentation procedure, and are encouraged to explore various segmentation techniques for the limited-angle reconstructions.* The segmentation method proposed by the challenge organizers is available at  https://www.fips.fi/HTCdata.php and is mostly based on Otsu's segmentation method.
 
 Instead of using this method, we performed the following steps on the tomography obtained in Section 4:
 
 * Preprocessing the output by denoising it with nonlocal means
-* Calculating the threshold with the Otsu's method
+* Calculating the threshold with Otsu's method
 * Adjusting a sigmoid to the denoised image, considering the threshold 
 * Creating a checkerboard level set with binary values
 * Using the Chan-Vese segmentation algorithm considering the checkerboard level set as the starting level set.
@@ -172,7 +172,7 @@ For more information, see segment_reconstruction(rec_img) at /utils/tools.py
 * The Python codes are available in this repository, see main.py and the /utils folder.
 
 * We ran our codes using Google Colaboratory (Colab), but it results in a large list of packages (obtained by pip freeze > requirements.txt) and not all of them are necessary.
-* It is possible to create a anaconda environment "by hand" given the packages list. In the following table, there is a small list of the main packages we used (with "import").
+* It is possible to create an Anaconda environment "by hand" given the packages list. In the following table, there is a small list of the main packages we used (with "import").
 
 | Package | Version |
 | ------------- | ------------- |
@@ -187,14 +187,14 @@ For more information, see segment_reconstruction(rec_img) at /utils/tools.py
 
 ### 7.2 Usage instructions and example: Running with a callable function from the command line
 
-By the rules, it was expected an one-line command: 
+By the rules, it was expected a one-line command: 
 * *Your main routine must require three input arguments:*
 1. *(string) Folder where the input image files are located*
 1. *(string) Folder where the output images must be stored*
 1. *(int) Difficulty category number. Values between 1 and 7*
 * *Python: The main function must be a callable function from the command line. 
 
-After the setup, it is possible to run our code following this rules. Considering the difficulty group 7: 
+After the setup, it is possible to run our code following these rules. Considering the difficulty group 7: 
 * !python main.py 'example/input' 'example/output' 7
 
 See, for instance, the Section "Generating results" from the example notebook [Here](/notebook_example.ipynb).
@@ -202,9 +202,9 @@ See, for instance, the Section "Generating results" from the example notebook [H
 
 ### 7.3. Alternative: Running with Google COLAB
 
-We created a Jupyter notebook to run the code using Google Colab, which can be found [Here](/notebook_example.ipynb) in this repository or here [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing), the Google Colab link itself.
+We created a Jupyter notebook to run the code using Google Colab, which can be found [Here](/notebook_example.ipynb) in this repository or directly in the Colab: [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing).
 
-There are some instructions in the notebook itself. Here is a general view for it, which considers that this repository is stil private:
+There are some instructions in the notebook itself. Here is a general view of it, which considers that this repository is still private:
 * First, we clone the private git repository.    
 * It's not recommended to upload the files directly into the Colab with a free account because of running time limitations. So, the HTC (test) dataset can be uploaded to a google drive account, linking it to the Google Colab via "mount drive" 
 * Google Colab will ask for a verification code and then it is possible to access Google Drive directly from the Google Colab.
@@ -238,9 +238,9 @@ D. Ulyanov, A. Vedaldi, and V. Lempitsky.
 “Deep image prior”. International Journal of Computer Vision, vol. 128, no. 7, pp.1867–1888 (2020). [Online]. Available at: https://doi.org/10.1007/s11263-020-01303-4
 
 <a id="6">[6]</a> 
-Semih Barutcu, Selin Aslan, Aggelos K. Katsaggelos and Doğa Gürsoy.
+Semih Barutcu, Selin Aslan, Aggelos K. Katsaggelos, and Doğa Gürsoy.
 “Limited‑angle computed tomography with deep image and physics priors”. Scientific Reports, vol. 11, 17740 (2021). Available at: https://doi.org/10.1038/s41598-021-97226-2
 
 <a id="7">[7]</a> 
-Lun Li, Renmin Han, Zhaotian Zhang, Tiande Guo, Zhiyong Liu and Fa Zhang. 
+Lun Li, Renmin Han, Zhaotian Zhang, Tiande Guo, Zhiyong Liu, and Fa Zhang. 
 “Compressed sensing improved iterative reconstruction-reprojection algorithm for electron tomography”. From 15th International Symposium on Bioinformatics Research and Applications (ISBRA’19). Available at: https://doi.org/10.1186/s12859-020-3529-3.
