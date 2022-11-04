@@ -154,6 +154,7 @@ Instead of using this method, we performed the following steps on the tomography
 * Adjusting a sigmoid to the denoised image, considering the threshold 
 * Creating a checkerboard level set with binary values
 * Using the Chan-Vese segmentation algorithm considering the checkerboard level set as the starting level set.
+* Postprocessing the result by applying a morphological opening operation.
 
 For more information, see segment_reconstruction(rec_img) at /utils/tools.py 
 
@@ -207,7 +208,6 @@ Here is a general view of it, which considers that this repository is still priv
 
 * There are some instructions in the notebook itself. 
 * First, we clone the private git repository, where the code and the dataset are.    
-* Google Colab will ask for a verification code and then it is possible to access Google Drive directly from the Google Colab.
 * After this, it is possible to execute the rest of the code.
 
 
