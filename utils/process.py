@@ -7,11 +7,6 @@ from torch_radon import RadonFanbeam
 def save_img(img_np, fname):
   ar = np.clip(img_np*255,0,255).astype(np.uint8)
 
-  if img_np.shape[0] == 1:
-      ar = ar[0]
-  else:
-      ar = ar.transpose(1, 2, 0)
-
   img = Image.fromarray(ar)
   img.save(fname)
 
