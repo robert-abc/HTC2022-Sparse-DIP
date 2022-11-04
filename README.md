@@ -216,7 +216,7 @@ There are some instructions in the notebook itself. Here is a general view for i
 * It's not recommended to upload the files directly into the Colab with a free account because of running time limitations. So, the HTC (test) dataset can be uploaded to a google drive account, linking it to the Google Colab via "mount drive" 
 * Google Colab will ask for a verification code and then it is possible to access Google Drive directly from the Google Colab.
 * After this, it is possible to execute the rest of the code.
-* [Link](https://drive.google.com/file/d/13ZNGcXyUSy8XoRfiRbRaEGJAJZomI5ix/view?usp=sharing)
+* [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing)
 
 ### 7.4 External codes
 
