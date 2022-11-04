@@ -3,7 +3,10 @@ import numpy as np
 from scipy.io import loadmat
 import matplotlib.pyplot as plt
 from skimage.restoration import denoise_nl_means
-from scipy.ndimage import grey_closing
+from skimage import exposure
+from skimage.segmentation import (morphological_chan_vese,
+                                  checkerboard_level_set)
+from scipy.ndimage import grey_closing, binary_opening
 import torch.nn.functional as F
 from utils.process import normalize
 from utils.dip import get_net, get_params
@@ -160,3 +163,26 @@ def MMP(pk, pu, radon_fanbeam, M, thresh_perc, lmbd,
       plt.show()
 
   return f
+
+def segment_reconstruction(rec_img):
+  n_iterations = 10 
+  smoothing_factor = 1 
+  checkboard_param = 3 
+  sig_cutoff_factor = 0.9
+
+  preprocess_img = denoise_nl_means(rec_img)
+  thresh = filters.threshold_otsu(preprocess_img)
+  preprocess_img  = exposure.adjust_sigmoid(preprocess_img, cutoff=abs(sig_cutoff_factor-thresh))
+
+  # Initial level set
+  init_ls = checkerboard_level_set(preprocess_img.shape, checkboard_param)
+
+  # Apply segmentation algorithm
+  ls = morphological_chan_vese(image, iterations=n_iterations, init_level_set=init_ls,
+                              smoothing=smoothing_factor)
+
+  # Post processing
+  seg = abs(ls - ls[25,25])
+  seg = binary_opening(seg, iterations=5)
+
+  return seg
