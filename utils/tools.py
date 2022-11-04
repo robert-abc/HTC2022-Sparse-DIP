@@ -4,6 +4,7 @@ from scipy.io import loadmat
 import matplotlib.pyplot as plt
 from skimage.restoration import denoise_nl_means
 from skimage import exposure
+from skimage import filters
 from skimage.segmentation import (morphological_chan_vese,
                                   checkerboard_level_set)
 from scipy.ndimage import grey_closing, binary_opening
@@ -94,7 +95,7 @@ def rec_mmp_seg(sinogram, radon_fanbeam, angles_index, dtype):
                       w_mmp=w_mmp, sino_mmp=sino_mmp, plot_interval=None, wl_reg=1e-9
                       )
   
-  return out_img[0].clone().detach().cpu().numpy()
+  return out_img[0,0].clone().detach().cpu().numpy()
 
 def DIP_rec(rec_net, rec_input, optimizer, sinogram_data, num_iter, radon_fanbeam, 
             ini_ang, fin_ang, cut_mask, circle_mask, reg_noise, noise,
@@ -178,7 +179,7 @@ def segment_reconstruction(rec_img):
   init_ls = checkerboard_level_set(preprocess_img.shape, checkboard_param)
 
   # Apply segmentation algorithm
-  ls = morphological_chan_vese(image, iterations=n_iterations, init_level_set=init_ls,
+  ls = morphological_chan_vese(preprocess_img, iterations=n_iterations, init_level_set=init_ls,
                               smoothing=smoothing_factor)
 
   # Post processing
