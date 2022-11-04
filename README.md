@@ -27,8 +27,6 @@ Challenge URL: https://www.fips.fi/HTC2022.php
 * After the tomographic image is reconstructed, it is necessary to segment it into two parts, binarizing it: the acrylic disk (1's) and the background, including holes (0's).   
 * For more details, please refer to https://www.fips.fi/Helsinki_Tomography_Challenge_2022_v1.pdf.
 
-
-
 ### 1.1 Dataset from the HTC2022  (https://zenodo.org/record/6984868)
 There are only 5 examples of sinograms and their respective filtered-backprojections (FBP) reconstructions. One is a solid disk and the others have holes, which are shown below:
 <p align="center">
@@ -105,6 +103,7 @@ $$ min ||y||_0 $$
 
 where $\chi_{\Omega}$ is a characteristic function of the set $\Omega$, with values equal to $1$ if the angle/projection is known and $0$ if it is unknown.
 
+In the article, the software implementation link is broken. 
 
 ## 4. Proposed method:
 
@@ -200,13 +199,14 @@ After the setup, it is possible to run our code following these rules. Consideri
 See, for instance, the Section "Generating results" from the example notebook [Here](/notebook_example.ipynb).
 
 
-### 7.3. Alternative: Running with Google COLAB
+### 7.3. Alternative: Running with Google COLAB and example
 
-We created a Jupyter notebook to run the code using Google Colab, which can be found [Here](/notebook_example.ipynb) in this repository or directly in the Colab: [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing).
+We created a Jupyter notebook to run the code using Google Colab directly: [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing).
 
-There are some instructions in the notebook itself. Here is a general view of it, which considers that this repository is still private:
-* First, we clone the private git repository.    
-* It's not recommended to upload the files directly into the Colab with a free account because of running time limitations. So, the HTC (test) dataset can be uploaded to a google drive account, linking it to the Google Colab via "mount drive" 
+Here is a general view of it, which considers that this repository is still private:
+
+* There are some instructions in the notebook itself. 
+* First, we clone the private git repository, where the code and the dataset are.    
 * Google Colab will ask for a verification code and then it is possible to access Google Drive directly from the Google Colab.
 * After this, it is possible to execute the rest of the code.
 
@@ -218,6 +218,11 @@ There are some instructions in the notebook itself. Here is a general view of it
 
 Although these toolboxes have their own requisites, Subsection 7.1 describes the ones we need. 
 
+## 8. Examples from the difficulty group 7
+From the traning dataset, ta-td from left to right:
+<p align="center">
+<img src="https://github.com/robert-abc/HTC2022-First/blob/main/example/output/ta_category7.png" width="200">  <img src="https://github.com/robert-abc/HTC2022-First/blob/main/example/output/tb_category7.png" width="200">   <img src="https://github.com/robert-abc/HTC2022-First/blob/main/example/output/tc_category7.png" width="200">   <img src="https://github.com/robert-abc/HTC2022-First/blob/main/example/output/td_category7.png" width="200">  
+</p>
 
 ## References
 <a id="1">[1]</a> 
