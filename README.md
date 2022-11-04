@@ -137,7 +137,7 @@ Originally, DIP considers a random tensor as the only input. In our work, the in
 
 The second step consists in obtaining a regularization term (substeps i-iv from below) and adding it to the DIP functional (substep v from below) given by
 
-$$\hat{\theta} = \arg\underset{\theta}{\min} ( ||A f_{\theta}(z) - y||_1 + \lambda_1||\theta||_2) + \lambda_2|| \chi_{\Omega} A x^* - \chi_{\Omega} A x_{\theta} ||_1) $$ 
+$$\hat{\theta} = \arg\underset{\theta}{\min} ( ||A f_{\theta}(z) - y||_1 + \lambda_1||\theta||_2 + \lambda_2|| (1-\chi_{\Omega}) A x^* - (1-\chi_{\Omega}) A f_{\theta}(z) ||_1) $$ 
 
 where $x^*$ is the obtained prior. 
 
