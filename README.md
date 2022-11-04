@@ -1,11 +1,5 @@
 # HTC2022 - Proposed algorithm
 
-By the rules: *Your repository must contain a README.md file with at least the following sections:*
-* *Installation instructions, including any requirements.*
-* *Python users: Please specify any modules used. If you use Anaconda, please add to the repository an environment.yml file capable of creating an environment than can run your code (instructions). Otherwise, please add a requirements.txt file generated with pip freeze (instructions)*
-* *Usage instructions.*
-* *Show few examples.*
-
 # Helsinki Tomography Challenge 2022 (HTC 2022): Brief description of our algorithm
 
 * See Section 7 for basic usage of the algorithm: It may take a few minutes to reconstruct the tomographic image. 
@@ -25,9 +19,9 @@ By the rules: *Your repository must contain a README.md file with at least the f
 Challenge URL: https://www.fips.fi/HTC2022.php
 
 * The challenge consists in reconstructing limited-angle computed tomography (CT) images,  i.e. reducing the number of the total projections to a region,  although it is expected to be a general-purpose (CT reconstruction) algorithm.  
-* An example of limited angle data is illustrated below (Imagem from [[2]](#2)).
+* An example of limited angle data is illustrated below (Imagem taken from [[2]](#2)).
 <p align="center">
-<img src="https://github.com/robert-abc/HTC2022/blob/main/figures/limited.png" width="700">
+<img src="https://github.com/robert-abc/HTC2022/blob/main/figures/limited.png" width="600">
 </p>
 
 * After the tomographic image is reconstructed, it is necessary to segment it into two parts, binarizing it: the acrylic disk (1's) and the background, including holes (0's).   
@@ -64,7 +58,7 @@ where $x$ is the tomographic image, $A$ is the (linear) forward model, and $y$ i
  
 ## 3. Review of DIP-based CT algorithms 
 
-The main idea was based on the Deep Image Prior [[5]](#5), but we modificated it to include other prior information. 
+The main idea was based on the Deep Image Prior [[5]](#5), but we modified it to include other prior information. 
 
 ### 3.1 Original DIP for general image processing  [[5]](#5)
 
@@ -73,7 +67,7 @@ The main idea was based on the Deep Image Prior [[5]](#5), but we modificated it
 
 The DIP consists of a deep generator network $f_{\theta}(z)$, a parametric function where the generator weights $\theta$ are randomly initialized and $z$ is a random vector.  
 
-During the traning phase, the weights are adjusted to map $f_{\theta}(z)$ to the tomographic image $x$, as the equation below includes the fan beam CT forward model $A$: 
+During the training phase, the weights are adjusted to map $f_{\theta}(z)$ to the tomographic image $x$, as the equation below includes the fan beam CT forward model $A$: 
 
 $$ \hat{\theta} = \arg\underset{\theta}{\min} E (A f_{\theta}(z), y) $$
 
@@ -86,7 +80,7 @@ $$\hat{x_{\theta}} = f_{\hat{\theta}}(z)$$
 The code is available at https://github.com/DmitryUlyanov/deep-image-prior.
 
 
-### 3.2 DIP for limited-angle CT reconstruction: overview [[6]](#6)
+### 3.2 DIP for limited-angle CT reconstruction [[6]](#6)
 
 * Input: Sinogram
 * Output: Tomographic image
@@ -95,15 +89,15 @@ In [[6]](#6), the authors use the anisotropic TV and $\ell_1$-norm in the fideli
 
 $$ \hat{\theta} = \arg\underset{\theta}{\min} ( ||A f_{\theta}(z) - y||_1 + \lambda ||\nabla x||_1) $$
 
-But, instead of using only convolutional layers in $f_{\theta}$ as the original DIP, they use a two cascaded neural network: It begins with a fully connected (neural) network (FCNN) before the convolutional layers, in a way that this FCNN obtains the tomographic image given the sinogram (reconstruction problem) and the following convolutional layers of the DIP improves the result. 
+But, instead of using only convolutional layers in $f_{\theta}$ as the original DIP, they use a two-cascaded neural network: It begins with a fully connected (neural) network (FCNN) before the convolutional layers, in a way that this FCNN obtains the tomographic image given the sinogram (reconstruction problem) and the following convolutional layers of the DIP improves the result. 
 
-They also use the ADMM to solve this functional. No code was publicly found.
+They also use the ADMM to solve this optimization problem. No code was publicly found.
 
-### 3.3 Compressed sensing improved iterative reconstruction-reprojection (CSIIRR) for limited-angle electron tomography image reconstruction: overview [[7]](#7)
+### 3.3 Compressed sensing improved iterative reconstruction-reprojection (CSIIRR) for limited-angle electron tomography image reconstruction [[7]](#7)
 
-In [[7]](#7), the authors developed an algorithm called CSIIRR to reconstruct electron tomographic images, that inherently presents limited-angle data. After preprocessing the data, it followed repeatedly:
+In [[7]](#7), the authors developed an algorithm called CSIIRR to reconstruct electron tomographic images, a technique that inherently presents limited-angle data. After preprocessing the data, it followed repeatedly:
 1. Reprojecting the reconstruction of the last iteration to estimate the unknown projections;
-1. Reconstructing the tomographic image using modified matching pursuit (MMP), an greedy algorithm that includes a $\ell_0$-norm constraint in the solution. The MMP algorithm can be found in Algorithm 1 of the same work:
+1. Reconstructing the tomographic image using modified matching pursuit (MMP), a greedy algorithm that includes a $\ell_0$-norm constraint in the solution. The MMP algorithm can be found in Algorithm 1 of the same work:
 
 $$ min ||y||_0 $$
 
@@ -175,9 +169,9 @@ For more information, see segment_reconstruction(rec_img) at /utils/tools.py
 * Note that we will make this repository public until November 30, 2022
 
 ### 7.1 Method installation and requirements
-* The Python codes are available in this repository, see main.py.
+* The Python codes are available in this repository, see main.py and the /utils folder.
 
-* We ran our codes using Google Colaboratory (Colab), but it results in a big list of packages (obtained by pip freeze > requirements.txt) and not all of them are necessary.
+* We ran our codes using Google Colaboratory (Colab), but it results in a large list of packages (obtained by pip freeze > requirements.txt) and not all of them are necessary.
 * It is possible to create a anaconda environment "by hand" given the packages list. In the following table, there is a small list of the main packages we used (with "import").
 
 | Package | Version |
@@ -191,39 +185,38 @@ For more information, see segment_reconstruction(rec_img) at /utils/tools.py
 | Torch | 1.6.0+cu101 | 
 | TorchRadon | 1.0.0 | 
 
-### 7.2 Usage instructions: Running with a callable function from the command line
+### 7.2 Usage instructions and example: Running with a callable function from the command line
 
 By the rules, it was expected an one-line command: 
 * *Your main routine must require three input arguments:*
 1. *(string) Folder where the input image files are located*
 1. *(string) Folder where the output images must be stored*
 1. *(int) Difficulty category number. Values between 1 and 7*
-* *Python: The main function must be a callable function from the command line. To achieve this you can use sys.argv or argparse module. Example calling the function:*
-* *$ python3 main.py path/to/input/files path/to/output/files 3*
+* *Python: The main function must be a callable function from the command line. 
 
-After the setup, it is possible to run our code by:
+After the setup, it is possible to run our code following this rules. Considering the difficulty group 7: 
+* !python main.py 'example/input' 'example/output' 7
 
-See, for instance, the Section "Generating results" from the exame notebook [Here](/notebook_example.ipynb).
-
+See, for instance, the Section "Generating results" from the example notebook [Here](/notebook_example.ipynb).
 
 
 ### 7.3. Alternative: Running with Google COLAB
 
-We created a notebook to run the code using Google Colab. The resulting Jupyter Notebook can be found in [Here](/notebook_example.ipynb).
+We created a Jupyter notebook to run the code using Google Colab, which can be found [Here](/notebook_example.ipynb) in this repository or here [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing), the Google Colab link itself.
 
 There are some instructions in the notebook itself. Here is a general view for it, which considers that this repository is stil private:
 * First, we clone the private git repository.    
 * It's not recommended to upload the files directly into the Colab with a free account because of running time limitations. So, the HTC (test) dataset can be uploaded to a google drive account, linking it to the Google Colab via "mount drive" 
 * Google Colab will ask for a verification code and then it is possible to access Google Drive directly from the Google Colab.
 * After this, it is possible to execute the rest of the code.
-* [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing)
+
 
 ### 7.4 External codes
 
 * To make our code compatible with PyTorch, it was mostly based on Torch Radon (https://torch-radon.readthedocs.io/en/latest/).
 * We also need to mention that we adapted functions from the original DIP article [[5]](#5). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
 
-* Although these toolboxes have their own requisites, Subsection 7.1 describes the ones we need. 
+Although these toolboxes have their own requisites, Subsection 7.1 describes the ones we need. 
 
 
 ## References
