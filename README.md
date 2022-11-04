@@ -40,12 +40,10 @@ There are only 5 examples of sinograms and their respective filtered-backproject
 <p align="center">
 <img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_A.png" width="200">  <img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_B.png" width="200">   <img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_C.png" width="200">   <img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_D.png" width="200">  
 </p>
-* *The test set consists of 21 phantoms, (...) that will be made public by the end of the competition*.
-* In this sense, it was necessary to generate extra data by simulation (See Section 2). 
 
 ### 1.2 Challenge constraints:
-By the rules: *The actual challenge data consists of 21 phantoms, arranged into seven groups of gradually increasing difficulty, with each level containing three different phantoms, labeled A, B, and C.*
-* We know the subsampling of each difficulty group., that is: The information given includes the initial (random) angle, the angular range, and the angular increment. 
+By the rules: *The actual challenge data consists of 21 phantoms, arranged into seven groups of gradually increasing difficulty, with each level containing three different phantoms, labeled A, B, and C. (...) that will be made public by the end of the competition*
+* We know the subsampling of each difficulty group, that is: The information given includes the initial (random) angle, the angular range, and the angular increment. 
 * The sinogram size varies for each difficulty group. 
 * We do not have examples for each difficulty group about the number and size of the holes (only one example of A, B, and C). 
 
@@ -61,13 +59,12 @@ where $x$ is the tomographic image, $A$ is the (linear) forward model, and $y$ i
 * By the instructions, the submitted algorithm does not need to subsample the test data (as this has already been done). In this way, we only need to create an appropriate $A$ for each difficulty group, given the initial angle and the angular range. 
 
 
-### Notes:
-* Although sparse, $A$ has 262144 x 403760 values considering full-angle CT, so it is often not practical to explicitly calculate $A$.
-* The above $A$ matrix size is calculated considering an image of 512x512 = 262144 values and  considering 560 (detector points) x [360*2+1] (a projection for each 0.5° angular increment) = 403760 values.  
+### Note:
+* The above $A$ matrix size is calculated considering an image of 512x512 = 262144 values and  considering 560 (detector points) x [360*2+1] (a projection for each 0.5° angular increment) = 403760 values. Although sparse, $A$ has 262144 x 403760 values considering full-angle CT, so it is often not practical to explicitly calculate $A$.  
  
 ## 3. Review of DIP-based CT algorithms 
 
-The main idea was based on the Deep Image Prior [[5]](#5), but we modificated it to include prior information about the simulated tomography dataset. 
+The main idea was based on the Deep Image Prior [[5]](#5), but we modificated it to include other prior information. 
 
 ### 3.1 Original DIP for general image processing  [[5]](#5)
 
@@ -89,12 +86,12 @@ $$\hat{x_{\theta}} = f_{\hat{\theta}}(z)$$
 The code is available at https://github.com/DmitryUlyanov/deep-image-prior.
 
 
-### 3.2 DIP for limited-angle CT reconstruction: overview [[7]](#7)
+### 3.2 DIP for limited-angle CT reconstruction: overview [[6]](#6)
 
 * Input: Sinogram
 * Output: Tomographic image
 
-In [[7]](#7), the authors use the anisotropic TV and $\ell_1$-norm in the fidelity term, that is, 
+In [[6]](#6), the authors use the anisotropic TV and $\ell_1$-norm in the fidelity term, that is, 
 
 $$ \hat{\theta} = \arg\underset{\theta}{\min} ( ||A f_{\theta}(z) - y||_1 + \lambda ||\nabla x||_1) $$
 
@@ -102,9 +99,9 @@ But, instead of using only convolutional layers in $f_{\theta}$ as the original 
 
 They also use the ADMM to solve this functional. No code was publicly found.
 
-### 3.3 Compressed sensing improved iterative reconstruction-reprojection (CSIIRR) for limited-angle electron tomography image reconstruction: overview [[8]](#8)
+### 3.3 Compressed sensing improved iterative reconstruction-reprojection (CSIIRR) for limited-angle electron tomography image reconstruction: overview [[7]](#7)
 
-In [[8]](#8), the authors developed an algorithm called CSIIRR to reconstruct electron tomographic images, that inherently presents limited-angle data. After preprocessing the data, it followed repeatedly:
+In [[7]](#7), the authors developed an algorithm called CSIIRR to reconstruct electron tomographic images, that inherently presents limited-angle data. After preprocessing the data, it followed repeatedly:
 1. Reprojecting the reconstruction of the last iteration to estimate the unknown projections;
 1. Reconstructing the tomographic image using modified matching pursuit (MMP), an greedy algorithm that includes a $\ell_0$-norm constraint in the solution. The MMP algorithm can be found in Algorithm 1 of the same work:
 
@@ -155,10 +152,19 @@ $$\hat{x_{\theta}} = f_{\hat{\theta}}(z)$$
 
 ## 5. Reconstruction postprocessing: Segmentation 
 
-By the instructions: *The competitors do not need to follow the above segmentation procedure, and are encouraged to explore various segmentation techniques for the limited-angle reconstructions.* The segmentation method proposed by the challenge organizers is available at: https://www.fips.fi/HTCdata.php.
+By the instructions: *The competitors do not need to follow the above segmentation procedure, and are encouraged to explore various segmentation techniques for the limited-angle reconstructions.* The segmentation method proposed by the challenge organizers is available at  https://www.fips.fi/HTCdata.php and is mostly based on the Otsu's segmentation method.
 
-Instead of using this method, we...
+Instead of using this method, we performed the following steps on the tomography obtained in Section 4:
 
+* Preprocessing the output by denoising it with nonlocal means
+* Calculating the threshold with the Otsu's method
+* Adjusting a sigmoid to the denoised image, considering the threshold 
+* Creating a checkerboard level set with binary values
+* Using the Chan-Vese segmentation algorithm considering the checkerboard level set as the starting level set.
+
+For more information, see segment_reconstruction(rec_img) at /utils/tools.py 
+
+ 
 ## 6. Reconstruction assessment method: Confusion matrix 
 
 * The organizers will use the following code for evaluating the reconstructions: https://www.fips.fi/main_confMatrix.py
@@ -169,7 +175,7 @@ Instead of using this method, we...
 * Note that we will make this repository public until November 30, 2022
 
 ### 7.1 Method installation and requirements
-* The Python codes / Jupyter Notebook are available in [Here](/Code).
+* The Python codes are available in this repository, see main.py.
 
 * We ran our codes using Google Colaboratory (Colab), but it results in a big list of packages (obtained by pip freeze > requirements.txt) and not all of them are necessary.
 * It is possible to create a anaconda environment "by hand" given the packages list. In the following table, there is a small list of the main packages we used (with "import").
@@ -185,50 +191,39 @@ Instead of using this method, we...
 | Torch | 1.6.0+cu101 | 
 | TorchRadon | 1.0.0 | 
 
-<!--- conda create NomeDoEnvironment -c pytorch -c  nvidia -c conda-forge opencv keras matplotlib pillow scipy scikit-image scikit-learn tensorflow tqdm pytorch torchvision cudatoolkit=11.1 --->
-
-* The additional (and necessary) files are: ........ 
-
 ### 7.2 Usage instructions: Running with a callable function from the command line
 
-By the rules: *Your main routine must require three input arguments:*
-* *(string) Folder where the input image files are located*
-* *(string) Folder where the output images must be stored*
-* *(int) Difficulty category number. Values between 1 and 7*
-
-*Python: The main function must be a callable function from the command line. To achieve this you can use sys.argv or argparse module. Example calling the function:*
+By the rules, it was expected an one-line command: 
+* *Your main routine must require three input arguments:*
+1. *(string) Folder where the input image files are located*
+1. *(string) Folder where the output images must be stored*
+1. *(int) Difficulty category number. Values between 1 and 7*
+* *Python: The main function must be a callable function from the command line. To achieve this you can use sys.argv or argparse module. Example calling the function:*
 * *$ python3 main.py path/to/input/files path/to/output/files 3*
 
+After the setup, it is possible to run our code by:
 
-An example can be found [Here](/Example).
+See, for instance, the Section "Generating results" from the exame notebook [Here](/notebook_example.ipynb).
 
-### 7.3. Alternative 1: Running with Google COLAB
 
-https://stackoverflow.com/questions/65300442/import-image-from-google-drive-to-google-colab
 
-We created a notebook to run the code using Google Colab, so here is a little setup for it:
+### 7.3. Alternative: Running with Google COLAB
+
+We created a notebook to run the code using Google Colab. The resulting Jupyter Notebook can be found in [Here](/notebook_example.ipynb).
+
+There are some instructions in the notebook itself. Here is a general view for it, which considers that this repository is stil private:
 * First, we clone the private git repository.    
 * It's not recommended to upload the files directly into the Colab with a free account because of running time limitations. So, the HTC (test) dataset can be uploaded to a google drive account, linking it to the Google Colab via "mount drive" 
 * Google Colab will ask for a verification code and then it is possible to access Google Drive directly from the Google Colab.
 * After this, it is possible to execute the rest of the code.
 * [Link](https://drive.google.com/file/d/13ZNGcXyUSy8XoRfiRbRaEGJAJZomI5ix/view?usp=sharing)
 
-### 7.4. Alternative 2: Running with Jupyter notebook
-
-* A
-* ...
-* ...
-
-### 7.5 External codes
+### 7.4 External codes
 
 * To make our code compatible with PyTorch, it was mostly based on Torch Radon (https://torch-radon.readthedocs.io/en/latest/).
+* We also need to mention that we adapted functions from the original DIP article [[5]](#5). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
 
-* We also need to mention that we adapted functions from:
-1. From [[5]](#5). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0
-The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
-2. From [[6]](#6). Available at https://github.com/sedaboni/ADMM-DIPTV. No copyright disclaimer was found. 
-
-* Although these toolboxes have their own requisites, Subsection 8.1 describes the ones we need. 
+* Although these toolboxes have their own requisites, Subsection 7.1 describes the ones we need. 
 
 
 ## References
@@ -250,14 +245,9 @@ D. Ulyanov, A. Vedaldi, and V. Lempitsky.
 “Deep image prior”. International Journal of Computer Vision, vol. 128, no. 7, pp.1867–1888 (2020). [Online]. Available at: https://doi.org/10.1007/s11263-020-01303-4
 
 <a id="6">[6]</a> 
-P. Cascarano, A. Sebastiani, M. C. Comes, G. Franchini and F. Porta.
-“Combining Weighted Total Variation and Deep Image Prior for natural and medical image restoration via ADMM”. 2021 21st International Conference on Computational Science and Its Applications (ICCSA), pp. 39-46 (2021). Available at: https://doi.org/10.1109/ICCSA54496.2021.00016.
-
-
-<a id="7">[7]</a> 
 Semih Barutcu, Selin Aslan, Aggelos K. Katsaggelos and Doğa Gürsoy.
 “Limited‑angle computed tomography with deep image and physics priors”. Scientific Reports, vol. 11, 17740 (2021). Available at: https://doi.org/10.1038/s41598-021-97226-2
 
-<a id="8">[8]</a> 
+<a id="7">[7]</a> 
 Lun Li, Renmin Han, Zhaotian Zhang, Tiande Guo, Zhiyong Liu and Fa Zhang. 
 “Compressed sensing improved iterative reconstruction-reprojection algorithm for electron tomography”. From 15th International Symposium on Bioinformatics Research and Applications (ISBRA’19). Available at: https://doi.org/10.1186/s12859-020-3529-3.
