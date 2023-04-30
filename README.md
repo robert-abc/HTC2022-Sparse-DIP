@@ -94,7 +94,7 @@ Here is a general view of it, which considers that this repository is still priv
 
 ### 3.4 External codes
 
-* To make our code compatible with PyTorch, it was mostly based on ODL (https://github.com/odlgroup/odl).
+* To make our code compatible with PyTorch, it was mostly based on ODL (https://github.com/odlgroup/odl), under Mozilla Public License, version 2.0.
 * We also need to mention that we adapted functions from the original DIP article [[4]](#4). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
 
 Although these toolboxes have their own requisites, Subsection 3.1 describes the ones we need. 
