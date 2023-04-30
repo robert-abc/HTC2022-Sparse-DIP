@@ -80,7 +80,7 @@ After the setup, it is possible to run our code following these rules. Consideri
 
 See, for instance, the Section "Generating results" from the example notebook [Here](/notebook_example.ipynb).
 
-### 3.4 External codes
+### 3.3 External codes
 
 * To make our code compatible with PyTorch, it was mostly based on ODL (https://github.com/odlgroup/odl), under Mozilla Public License, version 2.0.
 * We also need to mention that we adapted functions from the original DIP article [[4]](#4). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
