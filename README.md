@@ -80,18 +80,6 @@ After the setup, it is possible to run our code following these rules. Consideri
 
 See, for instance, the Section "Generating results" from the example notebook [Here](/notebook_example.ipynb).
 
-
-### 3.3. Alternative: Running with Google COLAB and example
-
-We created a Jupyter notebook to run the code using Google Colab directly: [Link](https://colab.research.google.com/drive/1A3THOEL-haZPkHg9il36SQroA2L_3Box?usp=sharing).
-
-Here is a general view of it, which considers that this repository is still private:
-
-* There are some instructions in the notebook itself. 
-* First, we clone the private git repository, where the code and the dataset are.    
-* After this, it is possible to execute the rest of the code.
-
-
 ### 3.4 External codes
 
 * To make our code compatible with PyTorch, it was mostly based on ODL (https://github.com/odlgroup/odl), under Mozilla Public License, version 2.0.
