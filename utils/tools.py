@@ -195,7 +195,7 @@ def segment_reconstruction(rec_img):
   init_ls = checkerboard_level_set(preprocess_img.shape, checkboard_param)
 
   # Apply segmentation algorithm
-  ls = morphological_chan_vese(preprocess_img, iterations=n_iterations, init_level_set=init_ls,
+  ls = morphological_chan_vese(preprocess_img, num_iter=n_iterations, init_level_set=init_ls,
                               smoothing=smoothing_factor)
 
   # Post processing

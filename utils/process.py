@@ -12,6 +12,9 @@ def save_img(img_np, fname):
 
 def load_img(img_path, dtype, opening_angle=None, starting_angle=0):
   # Load data
+  x = loadmat(img_path)
+
+  # Load data
   if('CtDataLimited' in x.keys()):
     data = x['CtDataLimited']
   elif('CtDataFull' in x.keys()):
@@ -20,7 +23,7 @@ def load_img(img_path, dtype, opening_angle=None, starting_angle=0):
   # Define image size
   image_size = 512
   sino_shape = (721, 560)
-  full_angles = np.arange(0, 360.5, 0.5).reshape(1,-1)
+  full_angles = np.arange(0, 360.5, 0.5)
   full_angles_rad = full_angles * np.pi / 180
 
   # Get sinogram, normalize and convert to pytorch tensor
@@ -37,8 +40,8 @@ def load_img(img_path, dtype, opening_angle=None, starting_angle=0):
     limited_angles = np.expand_dims(limited_angles, 0)
 
   limited_angles_rad = limited_angles * np.pi / 180
-  ini_ang = np.where(full_angles_rad.ravel() == limited_angles_rad[0,0])[0][0]
-  fin_ang = np.where(full_angles_rad.ravel() == limited_angles_rad[-1,-1])[0][0]
+  ini_ang = np.where(full_angles_rad == limited_angles_rad[0,0])[0][0]
+  fin_ang = np.where(full_angles_rad == limited_angles_rad[-1,-1])[0][0]
   angles_index = (ini_ang, fin_ang)
 
   # Get parameters from the acquisition
