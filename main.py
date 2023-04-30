@@ -46,6 +46,6 @@ for img_name in img_names:
 
   img_rec = tools.rec_mmp_seg(sinogram_torch, radon_fanbeam, angles_index, dtype)
   img_rec = process.normalize(img_rec)
-  img_seg = tools.segment_reconstruction(img_rec)
+  img_seg = tools.segment_reconstruction(img_rec[0])
 
   process.save_img(img_seg, path_out)
