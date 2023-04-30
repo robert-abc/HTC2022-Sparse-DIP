@@ -11,9 +11,9 @@ Our algorithm is based on the Deep Image Prior [[1]](#1), but we modified it to 
 ## Authors
 * Leonardo Ferreira Alves¹* - leonardo.alves@ufabc.edu.br
 * Roberto Gutierrez Beraldo¹ - roberto.gutierrez@ufabc.edu.br
-* John Andrew Sims¹ - john.sims@ufabc.edu.br
 * Ricardo Suyama¹ - ricardo.suyama@ufabc.edu.br
 * André Kazuo Takahata¹ - andre.t@ufabc.edu.br
+* John Andrew Sims¹ - john.sims@ufabc.edu.br
 
 *Corresponding author
 
