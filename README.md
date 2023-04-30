@@ -4,7 +4,7 @@
 
 Our algorithm is based on the Deep Image Prior [[1]](#1), but we modified it to include sparsity prior information. This was done with a greedy algorithm, the modified matching pursuit that includes a $\ell_0$-norm constraint in the solution [[2]](#2).
 
-* Section 1 describe the real-world problem concerning the HTC.
+* Section 1 describe the real-world problem concerning the HTC 2022.
 * Section 2 describes the forward model
 * Section 3 describes the installation and basic usage of the algorithm: It may take a few minutes to reconstruct the tomographic image. 
 
