@@ -76,7 +76,7 @@ By the rules of the HTC 2022, it was expected a one-line command:
 * *Python: The main function must be a callable function from the command line. 
 
 After the setup, it is possible to run our code following these rules. Considering the difficulty group 7: 
-* !python main.py 'example/input' 'example/output' 7
+* python main.py 'example/input' 'example/output' 7
 
 See, for instance, the Section "Generating results" from the example notebook [Here](/notebook_example.ipynb).
 
