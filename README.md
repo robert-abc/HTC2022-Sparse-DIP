@@ -1,17 +1,17 @@
-# HTC2022 - Proposed algorithm
-
-# Helsinki Tomography Challenge 2022 (HTC 2022): Brief description of our algorithm
+# Brief description of our algorithm in the context of Helsinki Tomography Challenge 2022 (HTC 2022)
 
 * See Section 7 for basic usage of the algorithm: It may take a few minutes to reconstruct the tomographic image. 
 * See Section 4 for an overview of the proposed method.
 * The other sections describe the challenge rules and detail the (forward) problem model.
 
 ## Authors
-* André Kazuo Takahata¹ - andre.t@ufabc.edu.br
-* John Andrew Sims¹ - john.sims@ufabc.edu.br
-* Leonardo Ferreira Alves¹ - leonardo.alves@ufabc.edu.br
-* Ricardo Suyama¹ - ricardo.suyama@ufabc.edu.br
+* Leonardo Ferreira Alves¹* - leonardo.alves@ufabc.edu.br
 * Roberto Gutierrez Beraldo¹ - roberto.gutierrez@ufabc.edu.br
+* John Andrew Sims¹ - john.sims@ufabc.edu.br
+* Ricardo Suyama¹ - ricardo.suyama@ufabc.edu.br
+* André Kazuo Takahata¹ - andre.t@ufabc.edu.br
+
+*Corresponding author
 
 ¹Federal University of ABC (Santo André, São Paulo, Brazil) - https://www.ufabc.edu.br/
 
@@ -19,25 +19,11 @@
 Challenge URL: https://www.fips.fi/HTC2022.php
 
 * The challenge consists in reconstructing limited-angle computed tomography (CT) images,  i.e. reducing the number of the total projections to a region,  although it is expected to be a general-purpose (CT reconstruction) algorithm.  
-* An example of limited angle data is illustrated below (Imagem taken from [[2]](#2)).
-<p align="center">
-<img src="https://github.com/robert-abc/HTC2022/blob/main/figures/limited.png" width="600">
-</p>
-
 * After the tomographic image is reconstructed, it is necessary to segment it into two parts, binarizing it: the acrylic disk (1's) and the background, including holes (0's).   
 * For more details, please refer to https://www.fips.fi/Helsinki_Tomography_Challenge_2022_v1.pdf.
-
-### 1.1 Dataset from the HTC2022  (https://zenodo.org/record/6984868)
-There are only 5 examples of sinograms and their respective filtered-backprojections (FBP) reconstructions. One is a solid disk and the others have holes, which are shown below:
-<p align="center">
-<img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_A.png" width="200">  <img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_B.png" width="200">   <img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_C.png" width="200">   <img src="https://github.com/robert-abc/HTC2022/blob/main/figures/extraSamples_D.png" width="200">  
-</p>
-
-### 1.2 Challenge constraints:
-By the rules: *The actual challenge data consists of 21 phantoms, arranged into seven groups of gradually increasing difficulty, with each level containing three different phantoms, labeled A, B, and C. (...) that will be made public by the end of the competition*
-* We know the subsampling of each difficulty group, that is: The information given includes the initial (random) angle, the angular range, and the angular increment. 
-* The sinogram size varies for each difficulty group. 
-* We do not have examples for each difficulty group about the number and size of the holes (only one example of A, B, and C). 
+* The training dataset consists of only 5 sinograms, while the test set contains 21 cases divided in 7 levels of difficulty. They are avaliable at: https://zenodo.org/record/7418878. 
+* We know the subsampling of each difficulty group, that is: The information given includes the initial (random) angle, the angular range, and the angular increment. The sinogram size varies for each difficulty group. 
+* We do not have information for each difficulty group about the number and size of the holes. 
 
 ## 2. Forward problem 
 We consider the forward problem, i.e. calculating the sinogram from the tomographic image, as 
