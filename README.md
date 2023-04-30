@@ -47,7 +47,7 @@ $$Ax = y$$
 where $x$ is the tomographic image, $A$ is the (linear) forward model, and $y$ is the resulting sinogram [[3]](#3).  
 
 * The cone beam computed tomography considers the detector is flat. As the image is 2D, the cone beam CT can be approximated by the fan beam CT. 
-* We use the ODL Pytorch extension [[4]](#4) (https://github.com/odlgroup/odl) to obtain $A$ not as an explicit matrix, but as an object.
+* We use the ODL Pytorch extension (https://github.com/odlgroup/odl) to obtain $A$ not as an explicit matrix, but as an object.
 * By the instructions, the submitted algorithm does not need to subsample the test data (as this has already been done). In this way, we only need to create an appropriate $A$ for each difficulty group, given the initial angle and the angular range. 
 
 
@@ -56,9 +56,9 @@ where $x$ is the tomographic image, $A$ is the (linear) forward model, and $y$ i
  
 ## 3. Review of DIP-based CT algorithms 
 
-The main idea was based on the Deep Image Prior [[5]](#5), but we modified it to include other prior information. 
+The main idea was based on the Deep Image Prior [[4]](#4), but we modified it to include other prior information. 
 
-### 3.1 Original DIP for general image processing  [[5]](#5)
+### 3.1 Original DIP for general image processing  [[4]](#4)
 
 * Input: Sinogram
 * Output: Tomographic image
@@ -78,12 +78,12 @@ $$\hat{x_{\theta}} = f_{\hat{\theta}}(z)$$
 The code is available at https://github.com/DmitryUlyanov/deep-image-prior.
 
 
-### 3.2 DIP for limited-angle CT reconstruction [[6]](#6)
+### 3.2 DIP for limited-angle CT reconstruction [[5]](#5)
 
 * Input: Sinogram
 * Output: Tomographic image
 
-In [[6]](#6), the authors use the anisotropic TV and $\ell_1$-norm in the fidelity term, that is, 
+In [[5]](#5), the authors use the anisotropic TV and $\ell_1$-norm in the fidelity term, that is, 
 
 $$ \hat{\theta} = \arg\underset{\theta}{\min} ( ||A f_{\theta}(z) - y||_1 + \lambda ||\nabla x||_1) $$
 
@@ -91,9 +91,9 @@ But, instead of using only convolutional layers in $f_{\theta}$ as the original 
 
 They also use the ADMM to solve this optimization problem. No code was publicly found.
 
-### 3.3 Compressed sensing improved iterative reconstruction-reprojection (CSIIRR) for limited-angle electron tomography image reconstruction [[7]](#7)
+### 3.3 Compressed sensing improved iterative reconstruction-reprojection (CSIIRR) for limited-angle electron tomography image reconstruction [[6]](#6)
 
-In [[7]](#7), the authors developed an algorithm called CSIIRR to reconstruct electron tomographic images, a technique that inherently presents limited-angle data. After preprocessing the data, it followed repeatedly:
+In [[6]](#6), the authors developed an algorithm called CSIIRR to reconstruct electron tomographic images, a technique that inherently presents limited-angle data. After preprocessing the data, it followed repeatedly:
 1. Reprojecting the reconstruction of the last iteration to estimate the unknown projections;
 1. Reconstructing the tomographic image using modified matching pursuit (MMP), a greedy algorithm that includes a $\ell_0$-norm constraint in the solution. The MMP algorithm can be found in Algorithm 1 of the same work:
 
@@ -214,7 +214,7 @@ Here is a general view of it, which considers that this repository is still priv
 ### 7.4 External codes
 
 * To make our code compatible with PyTorch, it was mostly based on ODL (https://github.com/odlgroup/odl).
-* We also need to mention that we adapted functions from the original DIP article [[5]](#5). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
+* We also need to mention that we adapted functions from the original DIP article [[4]](#4). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
 
 Although these toolboxes have their own requisites, Subsection 7.1 describes the ones we need. 
 
@@ -235,17 +235,13 @@ Jennifer Mueller and Samuli Siltanen. Statistical and Computational Inverse Prob
 Jari Kaipio and Erkki Somersalon. Linear and nonlinear inverse problems with practical applications. Philadelphia: Society for Industrial and Applied Mathematics (2012). 
 
 <a id="4">[4]</a> 
-Matteo Ronchetti. 
-"Torchradon: Fast differentiable routines for computed tomography". arXiv preprint arXiv:2009.14788, 2020. Available at: https://github.com/matteo-ronchetti/torch-radon 
-
-<a id="5">[5]</a> 
 D. Ulyanov, A. Vedaldi, and V. Lempitsky.
 “Deep image prior”. International Journal of Computer Vision, vol. 128, no. 7, pp.1867–1888 (2020). [Online]. Available at: https://doi.org/10.1007/s11263-020-01303-4
 
-<a id="6">[6]</a> 
+<a id="5">[5]</a> 
 Semih Barutcu, Selin Aslan, Aggelos K. Katsaggelos, and Doğa Gürsoy.
 “Limited‑angle computed tomography with deep image and physics priors”. Scientific Reports, vol. 11, 17740 (2021). Available at: https://doi.org/10.1038/s41598-021-97226-2
 
-<a id="7">[7]</a> 
+<a id="6">[6]</a> 
 Lun Li, Renmin Han, Zhaotian Zhang, Tiande Guo, Zhiyong Liu, and Fa Zhang. 
 “Compressed sensing improved iterative reconstruction-reprojection algorithm for electron tomography”. From 15th International Symposium on Bioinformatics Research and Applications (ISBRA’19). Available at: https://doi.org/10.1186/s12859-020-3529-3.
