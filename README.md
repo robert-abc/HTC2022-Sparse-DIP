@@ -47,7 +47,7 @@ $$Ax = y$$
 where $x$ is the tomographic image, $A$ is the (linear) forward model, and $y$ is the resulting sinogram [[3]](#3).  
 
 * The cone beam computed tomography considers the detector is flat. As the image is 2D, the cone beam CT can be approximated by the fan beam CT. 
-* We use the TorchRadon Pytorch extension [[4]](#4) (https://github.com/matteo-ronchetti/torch-radon) to obtain $A$ not as an explicit matrix, but as an object that can multiply a vector, such as $Ax$ or $A^Tx$.  
+* We use the ODL Pytorch extension [[4]](#4) (https://github.com/odlgroup/odl) to obtain $A$ not as an explicit matrix, but as an object.
 * By the instructions, the submitted algorithm does not need to subsample the test data (as this has already been done). In this way, we only need to create an appropriate $A$ for each difficulty group, given the initial angle and the angular range. 
 
 
@@ -176,14 +176,14 @@ For more information, see segment_reconstruction(rec_img) at /utils/tools.py
 
 | Package | Version |
 | ------------- | ------------- |
-| Python | 3.7.12 | 
-| Numpy | 1.21.6 | 
-| Matplotlib | 3.5.3 | 
-| Scipy | 1.7.3 | 
-| Skimage | 0.18.3 |
-| Pillow | 9.3.0 | 
-| Torch | 1.6.0+cu101 | 
-| TorchRadon | 1.0.0 | 
+| Python | 3.10.11 | 
+| Numpy | 1.22.4 | 
+| Matplotlib | 3.7.1 | 
+| Scipy | 1.10.1 | 
+| Skimage | 0.19.3 |
+| Pillow | 8.4.0 | 
+| Torch | 2.0.0+cu118 | 
+| ODL | 1.0.0 | 
 
 ### 7.2 Usage instructions and example: Running with a callable function from the command line
 
@@ -213,7 +213,7 @@ Here is a general view of it, which considers that this repository is still priv
 
 ### 7.4 External codes
 
-* To make our code compatible with PyTorch, it was mostly based on Torch Radon (https://torch-radon.readthedocs.io/en/latest/).
+* To make our code compatible with PyTorch, it was mostly based on ODL (https://github.com/odlgroup/odl).
 * We also need to mention that we adapted functions from the original DIP article [[5]](#5). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
 
 Although these toolboxes have their own requisites, Subsection 7.1 describes the ones we need. 
