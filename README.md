@@ -68,7 +68,7 @@ where $x$ is the tomographic image, $A$ is the (linear) forward model, and $y$ i
 
 ### 3.2 Usage instructions and example: Running with a callable function from the command line
 
-By the rules, it was expected a one-line command: 
+By the rules of the HTC 2022, it was expected a one-line command: 
 * *Your main routine must require three input arguments:*
 1. *(string) Folder where the input image files are located*
 1. *(string) Folder where the output images must be stored*
@@ -98,8 +98,6 @@ Here is a general view of it, which considers that this repository is still priv
 * We also need to mention that we adapted functions from the original DIP article [[4]](#4). Available at https://github.com/DmitryUlyanov/deep-image-prior/, under Apache License 2.0. The particular requisites are shown here: https://github.com/DmitryUlyanov/deep-image-prior/blob/master/README.md
 
 Although these toolboxes have their own requisites, Subsection 3.1 describes the ones we need. 
-
-
 
 ## References
 
