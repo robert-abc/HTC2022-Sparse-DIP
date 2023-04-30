@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image
 from scipy.io import loadmat
 import torch
-from torch_radon import RadonFanbeam
+import odl
 
 def save_img(img_np, fname):
   ar = np.clip(img_np*255,0,255).astype(np.uint8)
@@ -10,10 +10,12 @@ def save_img(img_np, fname):
   img = Image.fromarray(ar)
   img.save(fname)
 
-def load_img(img_path, dtype):
+def load_img(img_path, dtype, opening_angle=None, starting_angle=0):
   # Load data
-  x = loadmat(img_path)
-  data = x['CtDataLimited']
+  if('CtDataLimited' in x.keys()):
+    data = x['CtDataLimited']
+  elif('CtDataFull' in x.keys()):
+    data = x['CtDataFull']
 
   # Define image size
   image_size = 512
@@ -27,7 +29,13 @@ def load_img(img_path, dtype):
   sinogram_torch = (sinogram_torch-sinogram_torch.min())/(sinogram_torch.max()-sinogram_torch.min())
 
   # Get equipment angles
-  limited_angles = data['parameters'][0,0]['angles'][0,0]
+  if(opening_angle is None):
+    limited_angles = data['parameters'][0,0]['angles'][0,0]
+  else: 
+    starting_angle = starting_angle
+    limited_angles = np.arange(starting_angle, starting_angle + opening_angle + 0.5, 0.5)
+    limited_angles = np.expand_dims(limited_angles, 0)
+
   limited_angles_rad = limited_angles * np.pi / 180
   ini_ang = np.where(full_angles_rad.ravel() == limited_angles_rad[0,0])[0][0]
   fin_ang = np.where(full_angles_rad.ravel() == limited_angles_rad[-1,-1])[0][0]
@@ -45,7 +53,14 @@ def load_img(img_path, dtype):
   DOD = DOD /effPixel
 
   # Create radon fanbeam operator
-  radon_fanbeam = RadonFanbeam(image_size, full_angles_rad.ravel(), source_distance=DSO, det_distance=DOD, det_count=numDetectors)
+  angles_part = odl.uniform_partition_fromgrid(odl.discr.grid.RectGrid(full_angles_rad))
+  detectors_part = odl.uniform_partition(-M*sino_shape[1]/2, M*sino_shape[1]/2, sino_shape[1])
+  geometry =  odl.tomo.geometry.conebeam.FanBeamGeometry(angles_part, detectors_part, 
+                                                        src_radius=DSO, 
+                                                        det_radius=DOD,
+                                                        src_to_det_init=(-1, 0))
+  space = odl.discr.discr_space.uniform_discr([-256,-256], [256,256], (512, 512), dtype=np.float32)
+  radon_fanbeam = odl.tomo.RayTransform(space, geometry, impl="astra_cuda")
 
   return sinogram_torch, radon_fanbeam, angles_index
 

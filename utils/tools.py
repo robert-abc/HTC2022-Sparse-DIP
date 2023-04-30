@@ -11,10 +11,14 @@ from scipy.ndimage import grey_closing, binary_opening
 import torch.nn.functional as F
 from utils.process import normalize
 from utils.dip import get_net, get_params
+import odl
+from odl.contrib.torch import OperatorFunction
 
-def rec_mmp_seg(sinogram, radon_fanbeam, angles_index, dtype):
+def rec_mmp_seg(sinogram, radon_fanbeam, angles_index, dtype, mmp_iter=3,
+                ini_iter=950, w_mmp=0.1):
   # Size
-  image_size = 512 
+  image_size = 512
+  rec_dim = (image_size, image_size)  
   ini_ang, fin_ang = angles_index
   
   # Create circle mask
@@ -38,7 +42,6 @@ def rec_mmp_seg(sinogram, radon_fanbeam, angles_index, dtype):
   input_type = 'noise'
   img_size = (image_size, image_size)
   reg_noise = 5e-2 # Magnitude of the noise added to the input at each DIP iteration
-  ini_iter = 950
 
   # Optimization Parameters
   OPTIMIZER = 'adam'
@@ -48,9 +51,9 @@ def rec_mmp_seg(sinogram, radon_fanbeam, angles_index, dtype):
   LR = 0.00005
 
   # MMP parameters 
-  mmp_iter = 3
-  w_mmp = 1e-1 # MMP weight
-  thresh = [0.9, 0.85, 0.8] # Size defined by mmp_iter
+  M_l = [0.001, 0.005, 0.01]
+  lmbd = 1.5
+  i_mmp_iter = 35
   num_iter = [500, 500, 500] # Size defined by mmp_iter
 
   # Create mask of the angles outside the limited angle region
@@ -83,19 +86,23 @@ def rec_mmp_seg(sinogram, radon_fanbeam, angles_index, dtype):
                   )
 
   for i in range(mmp_iter):
-    pu = cut_mask * radon_fanbeam.forward(out_img[0,0].detach().clone())
-    img_mmp = MMP(pk, pu, radon_fanbeam, 500, thresh[i], 1, dtype, img_size, plot_results=False)
-    img_mmp_np = img_mmp.detach().cpu().numpy().reshape(img_size)
-    img_mmp_np = grey_closing(denoise_nl_means(img_mmp_np), size=15)
+    M = int(M_l[i] * 512**2)
+
+    pu = cut_mask * OperatorFunction.apply(radon_fanbeam, out_img[0,0].detach().clone())
+    img_mmp = MMP(M, i_mmp_iter, lmbd, sinogram, out_img, radon_fanbeam, rec_dim, cut_mask,
+                 circle_mask, dtype, pk, outer_iter=1, plot_results=False)
+
+    img_mmp_np = img_mmp.detach().cpu().numpy()
+    img_mmp_np = grey_closing(denoise_nl_means(img_mmp_np), size=27)
     img_mmp = torch.from_numpy(img_mmp_np).type(dtype)
-    sino_mmp = radon_fanbeam.forward(img_mmp)
+    sino_mmp = OperatorFunction.apply(radon_fanbeam, img_mmp)
 
     out_img = DIP_rec(rec_net, rec_input, optimizer, sinogram, num_iter[i], radon_fanbeam,
                       ini_ang, fin_ang, cut_mask, circle_mask, reg_noise, noise,
                       w_mmp=w_mmp, sino_mmp=sino_mmp, plot_interval=None, wl_reg=1e-9
                       )
   
-  return out_img[0,0].clone().detach().cpu().numpy()
+  return out_img[0].clone().detach().cpu().numpy()
 
 def DIP_rec(rec_net, rec_input, optimizer, sinogram_data, num_iter, radon_fanbeam, 
             ini_ang, fin_ang, cut_mask, circle_mask, reg_noise, noise,
@@ -106,7 +113,8 @@ def DIP_rec(rec_net, rec_input, optimizer, sinogram_data, num_iter, radon_fanbea
 
     out_img = rec_net(rec_input + reg_noise*noise.normal_())
     out_img = circle_mask*(out_img-out_img.min())/(out_img.max()-out_img.min())
-    out_sinogram = radon_fanbeam.forward(out_img[0,0])
+
+    out_sinogram = OperatorFunction.apply(radon_fanbeam, out_img[0,0])
 
     out_sinogram = (out_sinogram-out_sinogram.min())/(out_sinogram.max()-out_sinogram.min())
 
@@ -122,7 +130,6 @@ def DIP_rec(rec_net, rec_input, optimizer, sinogram_data, num_iter, radon_fanbea
       total_loss += wl_loss
 
     total_loss.backward()
-
     optimizer.step()
     
     if(plot_interval is not None):
@@ -138,26 +145,35 @@ def DIP_rec(rec_net, rec_input, optimizer, sinogram_data, num_iter, radon_fanbea
 
   return out_img
 
-def MMP(pk, pu, radon_fanbeam, M, thresh_perc, lmbd,
-        dtype, rec_dim, plot_results=False):
-  R = pk + lmbd*pu
-  f = torch.zeros((1,rec_dim[0]*rec_dim[1])).type(dtype)
-  thresh = thresh_perc * torch.norm(R)
+def MMP(M, n_iter, lmbd, sinogram_data, init_rec, radon_fanbeam, rec_dim, cut_mask,
+         circle_mask, dtype, pk=None, outer_iter=1, plot_results=False):
+  if pk is None:
+    pk = (1-cut_mask) * sinogram_data
+  
+  pu = cut_mask * OperatorFunction.apply(radon_fanbeam, init_rec)
+  fbp = odl.tomo.fbp_op(radon_fanbeam,
+                      filter_type='Shepp-Logan', frequency_scaling=0.8)
 
-  while(torch.norm(R) > thresh):
-    filtered_sinogram = radon_fanbeam.filter_sinogram(R)
-    rec_fbp = radon_fanbeam.backprojection(filtered_sinogram).reshape((1,-1))
+  for i in range(outer_iter):
+    R = pk + lmbd*pu
+    f = torch.zeros((1,rec_dim[0]*rec_dim[1])).type(dtype)
 
-    _, ind_max = torch.topk(rec_fbp, M)
-    f[0,ind_max] = f[0,ind_max] + rec_fbp[0,ind_max]
+    for i in range(n_iter):
+      rec_fbp = circle_mask * OperatorFunction.apply(fbp, R)
+      rec_fbp = rec_fbp.reshape(1,-1)
 
-    R = pk + lmbd*pu - radon_fanbeam.forward(f.reshape(rec_dim))
+      values_max, ind_max = torch.topk(rec_fbp, M)
+      f[0,ind_max] = f[0,ind_max] + rec_fbp[0,ind_max]
 
-  f = (f-f.min()) / (f.max()-f.min())
+      R = torch.clamp(pk + lmbd*pu - OperatorFunction.apply(radon_fanbeam, f.reshape(rec_dim)), min=0)
+
+    pu = cut_mask * OperatorFunction.apply(radon_fanbeam, f.reshape(rec_dim))
+
+  f = normalize(f.reshape(rec_dim))
 
   if(plot_results):
       img_np = f.clone().detach().cpu().numpy()
-      plt.imshow(img_np.reshape(rec_dim),cmap='gray')
+      plt.imshow(img_np,cmap='gray')
       plt.title(f"MMP Result")
       plt.colorbar() 
       plt.axis('off')
